@@ -96,7 +96,7 @@
         height: 100vh;
       }
       .lesson-btn {
-        position: absolute;
+
         left: 10px;
         z-index: 1000;
         padding: 12px 25px;
@@ -304,35 +304,36 @@
       <h3 id="planet-name" style="margin: 5px 0 2px"></h3>
       <p id="planet-desc" style="font-size: 14px"></p>
     </div>
+    <div style="position: absolute; top:10px; z-index: 1000;">
     <button
       id="showStarsLessonBtn"
       class="lesson-btn"
-      style="position: absolute; top: 10px; left: 10px; z-index: 1000"
+      style=" z-index: 1000"
     >
       Звёзды
     </button>
     <button
       id="showGalaxiesLessonBtn"
       class="lesson-btn"
-      style="position: absolute; top: 60px; left: 10px; z-index: 1000"
+      style="  z-index: 1000"
     >
       Галактики
     </button>
     <button
       id="showHistoryLessonBtn"
       class="lesson-btn"
-      style="position: absolute; top: 110px; left: 10px; z-index: 1000"
+      style="  z-index: 1000"
     >
       История астрономии
     </button>
     <button
       id="showExplorationLessonBtn"
       class="lesson-btn"
-      style="position: absolute; top: 160px; left: 10px; z-index: 1000"
+      style="  z-index: 1000"
     >
       Космические исследования
     </button>
-
+  </div>
     <div
       id="lessonBox"
       style="
@@ -345,7 +346,7 @@
         padding: 20px;
         border-radius: 10px;
         width: 320px;
-        z-index: 100;
+        z-index: 1001;
       "
     >
       <h2 id="lessonTitle"></h2>
