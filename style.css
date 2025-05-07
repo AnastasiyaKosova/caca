@@ -39,7 +39,8 @@ canvas {
 .constellation-card {
     position: fixed;
     max-width: 100px;
-    /* остальные стили см. в JS */
+    overflow: hidden;
+
 }
 
 #planet-info {
