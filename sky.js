@@ -794,7 +794,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // запуск анимации
-        generateStars(2000);
+        generateStars(1000);
         draw();
         setInterval(spawnMeteor, 1000);
       })
