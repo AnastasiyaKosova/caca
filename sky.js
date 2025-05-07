@@ -532,12 +532,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const starColor = getStarColor(star.spectral);
 
       ctx.beginPath();
-      ctx.arc(x, y, (3 + star.brightness * 5) * pulse, 0, Math.PI * 2);
+      ctx.arc(x, y, (3 + star.brightness * 5) * pulse * 0.5, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${starColor.r}, ${starColor.g}, ${starColor.b}, 0.7)`; // Добавим мягкое свечение
       ctx.fill();
 
       ctx.beginPath();
-      ctx.arc(x, y, (1.5 + star.brightness * 2) * pulse, 0, Math.PI * 2);
+      ctx.arc(x, y, (1.5 + star.brightness * 2) * pulse * 0.5, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${starColor.r}, ${starColor.g}, ${starColor.b}, 1)`; // Центр яркой звезды
       ctx.fill();
     });
