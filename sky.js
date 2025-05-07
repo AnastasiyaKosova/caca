@@ -121,7 +121,37 @@ document.addEventListener("DOMContentLoaded", () => {
       infoBox.style.display = "none";
     }
   });
-  
+  let lastTouch = null;
+
+  canvas.addEventListener("touchstart", (e) => {
+    isMouseDown = true;
+    lastTouch = e.touches[0];
+  }, { passive: false });
+
+  canvas.addEventListener("touchend", () => {
+    isMouseDown = false;
+    lastTouch = null;
+  });
+
+  canvas.addEventListener("touchcancel", () => {
+    isMouseDown = false;
+    lastTouch = null;
+  });
+
+  canvas.addEventListener("touchmove", (e) => {
+    if (!isMouseDown || !lastTouch) return;
+
+    e.preventDefault();
+
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - lastTouch.clientX;
+    const deltaY = touch.clientY - lastTouch.clientY;
+
+    targetRotY += deltaX * 0.005;
+    targetRotX += deltaY * 0.005;
+
+    lastTouch = touch;
+  }, { passive: false });
   // canvas.addEventListener("mousemove", (e) => {
   //   const mouseX = e.clientX; // координаты мыши
   //   const mouseY = e.clientY;
