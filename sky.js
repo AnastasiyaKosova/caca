@@ -24,43 +24,83 @@ document.addEventListener("DOMContentLoaded", () => {
   canvas.addEventListener("mousedown", () => (isMouseDown = true));
   canvas.addEventListener("mouseup", () => (isMouseDown = false));
   canvas.addEventListener("mouseleave", () => (isMouseDown = false));
-
   canvas.addEventListener("mousemove", (e) => {
-    const mouseX = e.clientX; // координаты мыши
-    const mouseY = e.clientY;
-    hoveredConstellation = getHoveredConstellation(mouseX, mouseY); // наведена ли мышь на созвездие
-    hoveredStar = hoveredConstellation ? null : getHoveredStar(mouseX, mouseY); // если наведена
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
 
+    // === Логика для звёзд и созвездий ===
+    hoveredConstellation = getHoveredConstellation(mouseX, mouseY);
+    hoveredStar = hoveredConstellation ? null : getHoveredStar(mouseX, mouseY);
+
+    // === Логика для вращения при зажатой кнопке мыши ===
     if (isMouseDown) {
-      targetRotY += e.movementX * 0.005; // если нажата мышь ВР СФЕРЫ
+      targetRotY += e.movementX * 0.005;
       targetRotX += e.movementY * 0.005;
     }
 
-    const rect = canvas.getBoundingClientRect(); // координаты мыши отн канваса
-    const canvasX = e.clientX - rect.left;
-    const canvasY = e.clientY - rect.top;
+    // === Логика для карточек созвездий ===
+    let foundIndex = -1;
+    constellations.forEach((c, i) => {
+      const proj = c.stars.map((s) => {
+        const r = rotateStar(s, rotationX, rotationY);
+        return project(r);
+      });
+      const xs = proj.map((p) => p[0]),
+          ys = proj.map((p) => p[1]);
+      const bb = {
+        minX: Math.min(...xs),
+        maxX: Math.max(...xs),
+        minY: Math.min(...ys),
+        maxY: Math.max(...ys),
+      };
+      if (
+          mouseX >= bb.minX - 10 &&
+          mouseX <= bb.maxX + 10 &&
+          mouseY >= bb.minY - 10 &&
+          mouseY <= bb.maxY + 10
+      ) {
+        foundIndex = i;
+      }
+    });
 
-    let hoveredPlanet = null; // для планет при наведении
-    const time = Date.now() * 0.002; // вращение планет
+    const cards = document.querySelectorAll(".constellation-card");
+    cards.forEach((card) => (card.style.display = "none"));
+
+    if (foundIndex >= 0) {
+      const card = cards[foundIndex];
+      card.style.display = "block";
+      card.style.left = `${e.clientX + 15}px`;
+      card.style.top = `${e.clientY + 15}px`;
+
+      const cardWidth = card.offsetWidth;
+      const cardHeight = card.offsetHeight;
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      if (e.clientX + 15 + cardWidth > windowWidth) {
+        card.style.left = `${windowWidth - cardWidth - 15}px`;
+      }
+      if (e.clientY + 15 + cardHeight > windowHeight) {
+        card.style.top = `${windowHeight - cardHeight - 15}px`;
+      }
+    }
+
+    // === Логика для планет (наведение и отображение информации) ===
+    let hoveredPlanet = null;
+    const time = Date.now() * 0.002;
 
     solarSystem.forEach((planet) => {
-      // все объекты в массиве solSys
-      const angle = time * planet.speed + solarSystem.indexOf(planet); // угол
-      const x3D = Math.cos(angle) * planet.distance; // 3d коры планеты на орбите
+      const angle = time * planet.speed + solarSystem.indexOf(planet);
+      const x3D = Math.cos(angle) * planet.distance;
       const y3D = Math.sin(angle) * planet.distance * Math.cos(planet.tilt);
       const z3D = Math.sin(angle) * planet.distance * Math.sin(planet.tilt);
 
-      const rotated = rotateStar(
-        // вращение
-        { x: x3D, y: y3D, z: z3D },
-        rotationX,
-        rotationY
-      );
-      const [x, y] = project(rotated); // коры 2д
-      const dist = Math.hypot(canvasX - x, canvasY - y); // расстояние между мышью и проекцией планеты
+      const rotated = rotateStar({ x: x3D, y: y3D, z: z3D }, rotationX, rotationY);
+      const [x, y] = project(rotated);
+      const dist = Math.hypot(mouseX - x, mouseY - y);
 
       if (dist < planet.size + 15) {
-        // если мышь в пред планеты
         hoveredPlanet = {
           ...planet,
           x: e.clientX,
@@ -75,13 +115,70 @@ document.addEventListener("DOMContentLoaded", () => {
       infoBox.style.top = `${hoveredPlanet.y + 15}px`;
       document.getElementById("planet-img").src = hoveredPlanet.img;
       document.getElementById("planet-name").textContent = hoveredPlanet.name;
-      document.getElementById("planet-desc").textContent =
-        hoveredPlanet.description;
+      document.getElementById("planet-desc").textContent = hoveredPlanet.description;
       infoBox.style.display = "block";
     } else {
       infoBox.style.display = "none";
     }
   });
+  
+  // canvas.addEventListener("mousemove", (e) => {
+  //   const mouseX = e.clientX; // координаты мыши
+  //   const mouseY = e.clientY;
+  //   hoveredConstellation = getHoveredConstellation(mouseX, mouseY); // наведена ли мышь на созвездие
+  //   hoveredStar = hoveredConstellation ? null : getHoveredStar(mouseX, mouseY); // если наведена
+  //
+  //   if (isMouseDown) {
+  //     targetRotY += e.movementX * 0.005; // если нажата мышь ВР СФЕРЫ
+  //     targetRotX += e.movementY * 0.005;
+  //   }
+  //
+  //   const rect = canvas.getBoundingClientRect(); // координаты мыши отн канваса
+  //   const canvasX = e.clientX - rect.left;
+  //   const canvasY = e.clientY - rect.top;
+  //
+  //   let hoveredPlanet = null; // для планет при наведении
+  //   const time = Date.now() * 0.002; // вращение планет
+  //
+  //   solarSystem.forEach((planet) => {
+  //     // все объекты в массиве solSys
+  //     const angle = time * planet.speed + solarSystem.indexOf(planet); // угол
+  //     const x3D = Math.cos(angle) * planet.distance; // 3d коры планеты на орбите
+  //     const y3D = Math.sin(angle) * planet.distance * Math.cos(planet.tilt);
+  //     const z3D = Math.sin(angle) * planet.distance * Math.sin(planet.tilt);
+  //
+  //     const rotated = rotateStar(
+  //       // вращение
+  //       { x: x3D, y: y3D, z: z3D },
+  //       rotationX,
+  //       rotationY
+  //     );
+  //     const [x, y] = project(rotated); // коры 2д
+  //     const dist = Math.hypot(canvasX - x, canvasY - y); // расстояние между мышью и проекцией планеты
+  //
+  //     if (dist < planet.size + 15) {
+  //       // если мышь в пред планеты
+  //       hoveredPlanet = {
+  //         ...planet,
+  //         x: e.clientX,
+  //         y: e.clientY,
+  //       };
+  //     }
+  //   });
+  //
+  //   const infoBox = document.getElementById("planet-info");
+  //   if (hoveredPlanet) {
+  //     infoBox.style.left = `${hoveredPlanet.x + 15}px`;
+  //     infoBox.style.top = `${hoveredPlanet.y + 15}px`;
+  //     document.getElementById("planet-img").src = hoveredPlanet.img;
+  //     document.getElementById("planet-name").textContent = hoveredPlanet.name;
+  //     document.getElementById("planet-desc").textContent =
+  //       hoveredPlanet.description;
+  //     infoBox.style.display = "block";
+  //   } else {
+  //     infoBox.style.display = "none";
+  //   }
+  // });
 
   const solarSystem = [
         //солн сист
@@ -516,62 +613,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return colors[spectralType] || { r: 255, g: 255, b: 255 }; // По умолчанию белый
   }
-  canvas.addEventListener("mousemove", (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    let foundIndex = -1;
-
-    constellations.forEach((c, i) => {
-      // ищем, над каким созвездием сейчас курсор
-
-      const proj = c.stars.map((s) => {
-        // изменить
-        const r = rotateStar(s, rotationX, rotationY);
-        return project(r);
-      });
-      const xs = proj.map((p) => p[0]),
-        ys = proj.map((p) => p[1]);
-      const bb = {
-        minX: Math.min(...xs),
-        maxX: Math.max(...xs),
-        minY: Math.min(...ys),
-        maxY: Math.max(...ys),
-      };
-      if (
-        mouseX >= bb.minX - 10 &&
-        mouseX <= bb.maxX + 10 &&
-        mouseY >= bb.minY - 10 &&
-        mouseY <= bb.maxY + 10
-      ) {
-        foundIndex = i;
-      }
-    });
-
-    const cards = document.querySelectorAll(".constellation-card"); // спрятать все карточки
-    cards.forEach((card) => (card.style.display = "none"));
-
-    if (foundIndex >= 0) {
-      // показать карточку
-      const card = cards[foundIndex];
-      card.style.display = "block"; // рядом с курсором
-      card.style.left = `${e.clientX + 15}px`;
-      card.style.top = `${e.clientY + 15}px`;
-
-      // Проверка, чтобы карточка не выходила за пределы экрана
-      const cardWidth = card.offsetWidth;
-      const cardHeight = card.offsetHeight;
-      const windowWidth = window.innerWidth;
-      const windowHeight = window.innerHeight;
-
-      if (e.clientX + 15 + cardWidth > windowWidth) {
-        card.style.left = `${windowWidth - cardWidth - 15}px`;
-      }
-      if (e.clientY + 15 + cardHeight > windowHeight) {
-        card.style.top = `${windowHeight - cardHeight - 15}px`;
-      }
-    }
-  });
+  // canvas.addEventListener("mousemove", (e) => {
+  //   const rect = canvas.getBoundingClientRect();
+  //   const mouseX = e.clientX - rect.left;
+  //   const mouseY = e.clientY - rect.top;
+  //   let foundIndex = -1;
+  //
+  //   constellations.forEach((c, i) => {
+  //     // ищем, над каким созвездием сейчас курсор
+  //
+  //     const proj = c.stars.map((s) => {
+  //       // изменить
+  //       const r = rotateStar(s, rotationX, rotationY);
+  //       return project(r);
+  //     });
+  //     const xs = proj.map((p) => p[0]),
+  //       ys = proj.map((p) => p[1]);
+  //     const bb = {
+  //       minX: Math.min(...xs),
+  //       maxX: Math.max(...xs),
+  //       minY: Math.min(...ys),
+  //       maxY: Math.max(...ys),
+  //     };
+  //     if (
+  //       mouseX >= bb.minX - 10 &&
+  //       mouseX <= bb.maxX + 10 &&
+  //       mouseY >= bb.minY - 10 &&
+  //       mouseY <= bb.maxY + 10
+  //     ) {
+  //       foundIndex = i;
+  //     }
+  //   });
+  //
+  //   const cards = document.querySelectorAll(".constellation-card"); // спрятать все карточки
+  //   cards.forEach((card) => (card.style.display = "none"));
+  //
+  //   if (foundIndex >= 0) {
+  //     // показать карточку
+  //     const card = cards[foundIndex];
+  //     card.style.display = "block"; // рядом с курсором
+  //     card.style.left = `${e.clientX + 15}px`;
+  //     card.style.top = `${e.clientY + 15}px`;
+  //
+  //     // Проверка, чтобы карточка не выходила за пределы экрана
+  //     const cardWidth = card.offsetWidth;
+  //     const cardHeight = card.offsetHeight;
+  //     const windowWidth = window.innerWidth;
+  //     const windowHeight = window.innerHeight;
+  //
+  //     if (e.clientX + 15 + cardWidth > windowWidth) {
+  //       card.style.left = `${windowWidth - cardWidth - 15}px`;
+  //     }
+  //     if (e.clientY + 15 + cardHeight > windowHeight) {
+  //       card.style.top = `${windowHeight - cardHeight - 15}px`;
+  //     }
+  //   }
+  // });
   function loadConstellations() {
     fetch("constellations.json")
       .then((res) => res.json())
