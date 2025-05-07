@@ -92,6 +92,8 @@
         top: 0;
         left: 0;
         z-index: 1;
+        width: 100vw;
+        height: 100vh;
       }
       .lesson-btn {
         position: absolute;
@@ -134,63 +136,119 @@
         border-radius: 10px;
         z-index: 1000;
       }
-      /* Адаптивные стили для экранов меньше 600px */
       @media (max-width: 600px) {
+        /* Обновления для мобильных устройств */
         #start-screen {
           width: 90%;
-          padding: 15px;
+          padding: 20px;
         }
 
         #start-screen h1 {
-          font-size: 1.5em;
-          margin-bottom: 10px;
+          font-size: 1.8em;
+          margin-bottom: 15px;
         }
 
         #start-btn {
-          padding: 8px 20px;
-          font-size: 0.9em;
+          padding: 10px 25px;
+          font-size: 1em;
+        }
+
+        .lesson-btn {
+          padding: 10px 20px;
+          font-size: 0.8em;
+          margin-bottom: 10px;
         }
 
         .controls {
-          font-size: 0.7em;
-          padding: 8px;
+          bottom: 10px;
+          right: 10px;
+          font-size: 0.8em;
+          padding: 10px;
         }
 
         #constellation-cards {
-          position: fixed;
-          bottom: 10px;
-          left: 10px;
-          right: 10px;
-          max-height: 40vh;
-          background: rgba(0, 0, 0, 0.85);
-          color: white;
-          border-radius: 12px;
-          padding: 10px;
-          font-size: 0.8em;
-          overflow-y: auto;
-          z-index: 10000;
-          display: none;
-          transition: opacity 0.3s ease;
+          #constellation-cards {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            max-height: 40vh;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            border-radius: 12px;
+            padding: 10px;
+            font-size: 0.8em;
+            overflow-y: auto;
+            z-index: 10000;
+            display: none;
+            transition: opacity 0.3s ease;
+          }
         }
 
         #planet-info {
-          max-width: 150px;
-          font-size: 0.65em;
+          max-width: 180px;
+          font-size: 0.9em;
         }
 
         #showStarsLessonBtn,
         #showGalaxiesLessonBtn,
         #showHistoryLessonBtn,
         #showExplorationLessonBtn {
-          padding: 10px;
-          font-size: 0.6em;
+          padding: 8px 15px;
+          font-size: 0.8em;
+        }
+
+        #lessonBox {
+          width: 80%;
+          max-width: 100%;
+          font-size: 0.85em;
+          padding: 15px;
+        }
+
+        canvas {
+          top: 0;
+          left: 0;
+          z-index: 0;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        /* Под планшеты */
+        #start-screen {
+          width: 85%;
+          padding: 30px;
+        }
+
+        #start-screen h1 {
+          font-size: 2.2em;
+          margin-bottom: 20px;
+        }
+
+        #start-btn {
+          padding: 12px 30px;
+          font-size: 1.1em;
+        }
+
+        .lesson-btn {
+          padding: 12px 25px;
+          font-size: 0.9em;
+        }
+
+        .controls {
+          font-size: 1em;
+          padding: 12px;
+        }
+
+        #planet-info {
+          max-width: 220px;
+          font-size: 1em;
         }
 
         #lessonBox {
           width: 90%;
-          max-width: none;
-          font-size: 0.7em;
-          padding: 15px;
+          max-width: 100%;
+          font-size: 1em;
+          padding: 20px;
         }
       }
     </style>
