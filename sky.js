@@ -189,12 +189,32 @@ document.addEventListener("DOMContentLoaded", () => {
   let touchStartX = 0;
   let touchStartY = 0;
   canvas.addEventListener("touchstart", (e) => {
-    // точи для моб
-    e.preventDefault();
-    isMouseDown = true;
     const touch = e.touches[0];
-    touchStartX = touch.clientX;
-    touchStartY = touch.clientY;
+    if (!touch) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mx = touch.clientX - rect.left;
+    const my = touch.clientY - rect.top;
+
+    hoveredConstellation = null;
+    hoveredStar = null;
+
+    for (const constellation of constellations) {
+      for (const star of constellation.stars) {
+        const r = rotateStar(star, rotationX, rotationY);
+        if (r.z > -FOV) {
+          const [x, y] = project(r);
+          const dx = x - mx;
+          const dy = y - my;
+          if (dx * dx + dy * dy < 100) {
+            hoveredConstellation = constellation;
+            hoveredStar = star;
+            break;
+          }
+        }
+      }
+      if (hoveredConstellation) break;
+    }
   });
 
   canvas.addEventListener("touchmove", (e) => {
@@ -855,3 +875,4 @@ const audio = document.getElementById("background-music");
   // Вызываем resizeCanvas при загрузке страницы и при изменении размера окна
   window.addEventListener("load", resizeCanvas);
   window.addEventListener("resize", resizeCanvas);
+  

@@ -136,54 +136,63 @@
       }
       /* Адаптивные стили для экранов меньше 600px */
       @media (max-width: 600px) {
-            #start-screen {
-                width: 90%;
-                padding: 15px;
-            }
+        #start-screen {
+          width: 90%;
+          padding: 15px;
+        }
 
-            #start-screen h1 {
-                font-size: 1.5em;
-                margin-bottom: 10px;
-            }
+        #start-screen h1 {
+          font-size: 1.5em;
+          margin-bottom: 10px;
+        }
 
-            #start-btn {
-                padding: 8px 20px;
-                font-size: 0.9em;
-            }
+        #start-btn {
+          padding: 8px 20px;
+          font-size: 0.9em;
+        }
 
-            .controls {
-                font-size: 0.7em;
-                padding: 8px;
-            }
+        .controls {
+          font-size: 0.7em;
+          padding: 8px;
+        }
 
-            #constellation-cards {
-                max-height: 30vh;
-                font-size: 0.7em;
-                padding: 3px;
-                overflow: hidden;
-            }
+        #constellation-cards {
+          position: fixed;
+          bottom: 10px;
+          left: 10px;
+          right: 10px;
+          max-height: 40vh;
+          background: rgba(0, 0, 0, 0.85);
+          color: white;
+          border-radius: 12px;
+          padding: 10px;
+          font-size: 0.8em;
+          overflow-y: auto;
+          z-index: 10000;
+          display: none;
+          transition: opacity 0.3s ease;
+        }
 
-            #planet-info {
-                max-width: 150px;
-                font-size: 0.65em;
-            }
+        #planet-info {
+          max-width: 150px;
+          font-size: 0.65em;
+        }
 
-            #showStarsLessonBtn,
-            #showGalaxiesLessonBtn,
-            #showHistoryLessonBtn,
-            #showExplorationLessonBtn {
-                padding: 10px;
-                font-size: 0.6em;
+        #showStarsLessonBtn,
+        #showGalaxiesLessonBtn,
+        #showHistoryLessonBtn,
+        #showExplorationLessonBtn {
+          padding: 10px;
+          font-size: 0.6em;
+        }
 
-            }
-
-            #lessonBox {
-                width: 90%;
-                max-width: none;
-                font-size: 0.7em;
-                padding: 15px;
-            }
-          }
+        #lessonBox {
+          width: 90%;
+          max-width: none;
+          font-size: 0.7em;
+          padding: 15px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -238,25 +247,29 @@
       <p id="planet-desc" style="font-size: 14px"></p>
     </div>
     <button
-      id="showStarsLessonBtn" class="lesson-btn"
+      id="showStarsLessonBtn"
+      class="lesson-btn"
       style="position: absolute; top: 10px; left: 10px; z-index: 1000"
     >
       Звёзды
     </button>
     <button
-      id="showGalaxiesLessonBtn" class="lesson-btn"
+      id="showGalaxiesLessonBtn"
+      class="lesson-btn"
       style="position: absolute; top: 60px; left: 10px; z-index: 1000"
     >
       Галактики
     </button>
     <button
-      id="showHistoryLessonBtn" class="lesson-btn"
+      id="showHistoryLessonBtn"
+      class="lesson-btn"
       style="position: absolute; top: 110px; left: 10px; z-index: 1000"
     >
       История астрономии
     </button>
     <button
-      id="showExplorationLessonBtn" class="lesson-btn"
+      id="showExplorationLessonBtn"
+      class="lesson-btn"
       style="position: absolute; top: 160px; left: 10px; z-index: 1000"
     >
       Космические исследования
